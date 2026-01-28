@@ -1,1 +1,116 @@
-<p>add-alumno works!</p>
+<div class="container">
+  <h3 mat-dialog-title>Añadir Alumno</h3>
+
+  <form class="mat-dialog-content" [formGroup]="alumnoForm">
+
+    <div class="form">
+      <mat-form-field color="accent">
+        <input matInput placeholder="NIF / NIE" formControlName="nif_nie" maxlength="20" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field color="accent">
+        <input matInput placeholder="Nombre" formControlName="nombre" maxlength="100" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field color="accent">
+        <input matInput placeholder="Apellidos" formControlName="apellidos" maxlength="150" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field>
+        <mat-label>Fecha de nacimiento</mat-label>
+        <input matInput type="date" formControlName="fecha_nacimiento" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field>
+        <mat-label>Centro educativo</mat-label>
+        <mat-select formControlName="id_entidad_centro" required>
+          <mat-option *ngFor="let centro of entidades" [value]="centro.id">
+            {{ centro.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field>
+        <mat-label>Ciclo</mat-label>
+        <mat-select formControlName="id_ciclo" required>
+          <mat-option *ngFor="let ciclo of ciclos" [value]="ciclo.id">
+            {{ ciclo.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field>
+        <mat-label>Curso</mat-label>
+        <mat-select formControlName="curso" required>
+          <mat-option *ngFor="let c of cursos" [value]="c">
+            {{ c }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field color="accent">
+        <input matInput placeholder="Teléfono" formControlName="telefono" maxlength="20" required>
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field color="accent">
+        <input matInput placeholder="Dirección" formControlName="direccion" maxlength="150">
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field color="accent">
+        <input matInput placeholder="Código Postal" formControlName="cp" maxlength="10">
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field color="accent">
+        <input matInput placeholder="Localidad" formControlName="localidad" maxlength="100">
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field>
+        <mat-label>Provincia</mat-label>
+        <mat-select formControlName="id_provincia">
+          <mat-option value="">Sin provincia</mat-option>
+          <mat-option *ngFor="let p of provincias" [value]="p.id_provincia">
+            {{ p.provincia }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field color="accent">
+        <textarea matInput placeholder="Observaciones" formControlName="observaciones"></textarea>
+      </mat-form-field>
+    </div>
+
+    <div mat-dialog-actions>
+      <button mat-button type="submit" [disabled]="!alumnoForm.valid" (click)="confirmAdd()">
+        Guardar
+      </button>
+      <button mat-button (click)="onClick()" tabindex="-1">
+        Cancelar
+      </button>
+    </div>
+
+  </form>
+</div>
