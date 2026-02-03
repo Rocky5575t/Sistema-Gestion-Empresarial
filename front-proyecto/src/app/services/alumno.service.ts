@@ -2,12 +2,12 @@
 import { Injectable } from '@angular/core';
 import { Alumno } from '../shared/interfaces/alumno'; // Interfaz Alumno
 import { ApiResponse } from '../shared/interfaces/api-response'; // Interfaz de respuesta genérica
-import { HttpClient } from '@angular/common/http'; // HttpClient de Angular
+import { HttpClient, HttpParams } from '@angular/common/http'; // HttpClient de Angular
 import { CommonService } from '../shared/common.service'; // Servicio común con headers
 import { URL_API } from 'src/environments/environment'; // URL base de la API
 
 // Endpoint específico para alumnos
-const ENDPOINT = 'alumno';
+const ENDPOINT = 'alumnos';
 
 @Injectable({
   providedIn: 'root' // Angular lo inyecta automáticamente en toda la app
@@ -23,9 +23,7 @@ export class AlumnosService {
   // Obtener todos los alumnos
   // -----------------------------
   getAll() {
-    return this.http.get<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, {
-      headers: this.commonService.headers
-    });
+    return this.http.get<ApiResponse>(`http://127.0.0.1:8000/alumnos`, { headers: this.commonService.getHeaders() });
   }
 
   // -----------------------------
@@ -33,7 +31,7 @@ export class AlumnosService {
   // -----------------------------
   addAlumno(alumno: Alumno) {
     const body = JSON.stringify(alumno); // Convertimos el objeto a JSON
-    return this.http.post<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, body, {
+    return this.http.post<ApiResponse>(`${URL_API}/${ENDPOINT}`, body, {
       headers: this.commonService.headers
     });
   }
@@ -43,7 +41,7 @@ export class AlumnosService {
   // -----------------------------
   editAlumno(alumno: Alumno) {
     const body = JSON.stringify(alumno);
-    return this.http.put<ApiResponse>(`${URL_API}/${ENDPOINT}.php`, body, {
+    return this.http.put<ApiResponse>(`${URL_API}/${ENDPOINT}`, body, {
       headers: this.commonService.headers
     });
   }
@@ -52,7 +50,7 @@ export class AlumnosService {
   // Eliminar un alumno
   // -----------------------------
   deleteAlumno(id: number | string) {
-    return this.http.delete<ApiResponse>(`${URL_API}/${ENDPOINT}.php?id=${id}`, {
+    return this.http.delete<ApiResponse>(`${URL_API}/${ENDPOINT}?id=${id}`, {
       headers: this.commonService.headers
     });
   }

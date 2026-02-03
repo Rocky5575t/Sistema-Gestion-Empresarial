@@ -1,41 +1,41 @@
-from fastapi import Header, HTTPException
+# auth.py
+from fastapi import Security, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlmodel import Session, select
-
 from app.db import engine
 from app.models import Usuario
 
 # -------------------------------------------------
+# CONFIGURACIÓN DE SEGURIDAD
+# -------------------------------------------------
+# Este objeto indica a FastAPI que usaremos Authorization: Bearer <token>
+security = HTTPBearer()
+
+# -------------------------------------------------
 # FUNCIÓN DE VALIDACIÓN DE TOKEN
 # -------------------------------------------------
-# Esta función sustituye a:
-# if ($authorization->token_valido) { ... }
-#
-# Se ejecuta AUTOMÁTICAMENTE antes de entrar a cualquier endpoint
-def validar_token(authorization: str = Header(None)):
-    # Si no viene el header Authorization
-    if not authorization:
-        raise HTTPException(
-            status_code=401,
-            detail="NO_TOKEN"
-        )
+def validar_token(credentials: HTTPAuthorizationCredentials = Security(security)):
+    """
+    Valida que el token enviado en el header Authorization sea correcto.
 
-    # Quitamos el prefijo "Bearer "
-    token = authorization.replace("Bearer ", "")
+    Swagger UI reconocerá automáticamente este endpoint como protegido
+    y mostrará el botón Authorize.
+    """
 
-    # Abrimos una sesión contra la BD
+    token = credentials.credentials  # extrae el token puro del Bearer
+
+    # Abrimos sesión en la DB y buscamos usuario con ese token
     with Session(engine) as session:
-        # Buscamos un usuario con ese token
         usuario = session.exec(
-            select(Usuario).where(Usuario.tocket_sesion == token)
+            select(Usuario).where(Usuario.token_sesion == token)
         ).first()
 
-    # Si no existe el token
+    # Si no existe el usuario → 401
     if not usuario:
         raise HTTPException(
-            status_code=401,
+            status_code=status.HTTP_401_UNAUTHORIZED,
             detail="TOKEN_INVALIDO"
         )
 
-    # Si todo va bien, devolvemos el usuario
-    # (FastAPI lo inyecta en el endpoint)
+    # Si todo va bien → devolvemos el usuario
     return usuario

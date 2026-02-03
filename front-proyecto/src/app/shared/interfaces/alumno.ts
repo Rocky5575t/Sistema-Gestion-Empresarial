@@ -14,4 +14,5 @@ export interface Alumno {
   localidad?: string;
   id_provincia?: number;
   observaciones?: string;
+  checked?: boolean;
 }

@@ -3,7 +3,7 @@ from sqlmodel import create_engine
 # URL de conexión a MySQL
 # formato:
 # mysql+mysqlconnector://USUARIO:CONTRASEÑA@HOST/NOMBRE_BD
-DATABASE_URL = "mysql+mysqlconnector://root:8489@192.168.10.113/app_radfpd"
+DATABASE_URL = "mysql+mysqlconnector://api_user:Api1234%21@192.168.10.113:3306/app_radfpd"
 
 # Creamos el engine
 # - engine es el objeto central que gestiona la conexión a la BD

@@ -14,7 +14,6 @@ import { MatNativeDateModule } from '@angular/material/core';
 
 import { DatosEntidadComponent } from './entidades/datos-entidad/datos-entidad.component'
 import { DatosReunionComponent } from './reuniones/datos-reunion/datos-reunion.component';
-import { AlumnoComponent } from './alumno/alumno.component'
 
 // import { NgxLoadingXModule, POSITION, SPINNER, NgxLoadingXConfig } from 'ngx-loading-x';
 
@@ -35,7 +34,7 @@ import { AlumnoComponent } from './alumno/alumno.component'
 @NgModule({
   declarations: [
     AppComponent,
-    AlumnoComponent,
+
   ],
   imports: [
     BrowserModule,
