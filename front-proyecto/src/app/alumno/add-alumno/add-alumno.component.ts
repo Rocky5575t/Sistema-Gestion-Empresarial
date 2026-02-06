@@ -13,6 +13,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CLOSE, INVALID_FORM,ALUMNO_ALUMNO } from 'src/app/shared/messages';
 import { MatDialogRef } from '@angular/material/dialog';
 import { CurrencyPipe } from '@angular/common';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-add-alumno',
@@ -21,17 +23,14 @@ import { CurrencyPipe } from '@angular/common';
 })
 export class AddAlumnoComponent implements OnInit {
   alumnoForm: FormGroup;
-  provincias: Provincia[];
-  ciclos: Ciclo[];
-  entidades: Entidad[];
+  provincias: Provincia[]=[];
+  ciclos: Ciclo[]=[];
+  entidades: Entidad[]=[];
   cursos = [1, 2];
 
 
+
   ALUMNO: String;
-
-
-
-
 
   constructor(public dialogRef: MatDialogRef<AddAlumnoComponent>,
     private snackBar: MatSnackBar,
@@ -39,6 +38,7 @@ export class AddAlumnoComponent implements OnInit {
     private servicioCiclos: CiclosService,
     private servicioCentros: EntidadesService,
     private servicioAlumnos: AlumnosService,
+    private router: Router
 
   ) { }
 
@@ -60,24 +60,43 @@ export class AddAlumnoComponent implements OnInit {
     observaciones: new FormControl(null)
   });
   this.ALUMNO = ALUMNO_ALUMNO
+
+  // 🔥 ESTO ES LO QUE FALTABA
+  this.getProvincias();
+  this.getCiclos();
+  this.getEntidadCentros();
   }
 
-  async confirmAdd(){
-    if (this.alumnoForm.valid) {
-      const alumnoCreado = this.alumnoForm.value as Alumno;
+confirmAdd() {
+  if (this.alumnoForm.valid) {
+    const alumnoCreado = this.alumnoForm.value as Alumno;
 
-      const RESPONSE = await this.servicioAlumnos.addAlumno(alumnoCreado).toPromise();
-      if (RESPONSE.ok) {
-        this.snackBar.open(RESPONSE.message, CLOSE, {duration:5000});
-        this.dialogRef.close({ok: RESPONSE.ok, data: RESPONSE.data});
-      } else {
-        this.snackBar.open(RESPONSE.message,CLOSE,{duration:5000});
+    // 🔹 Usamos subscribe en lugar de toPromise
+    this.servicioAlumnos.addAlumno(alumnoCreado).subscribe({
+      next: (RESPONSE: any) => {
+        if (RESPONSE.ok) {
+          // Mostrar mensaje de éxito
+          this.snackBar.open(RESPONSE.message, CLOSE, { duration: 5000 });
+
+          // Cerrar dialog y pasar info al componente padre para refrescar lista
+          this.dialogRef.close({ ok: RESPONSE.ok, data: RESPONSE.data });
+
+          // ⚠️ Ya no hace falta navegar con router si el padre refresca la lista
+        } else {
+          this.snackBar.open(RESPONSE.message, CLOSE, { duration: 5000 });
+        }
+      },
+      error: (err) => {
+        console.error('Error al guardar alumno', err);
+        this.snackBar.open('Error al conectar con el servidor', CLOSE, { duration: 5000 });
       }
+    });
 
-    }else{
-      this.snackBar.open(INVALID_FORM,CLOSE,{duration:5000});
-    }
+  } else {
+    this.snackBar.open(INVALID_FORM, CLOSE, { duration: 5000 });
   }
+}
+
 
 
 
@@ -86,29 +105,33 @@ export class AddAlumnoComponent implements OnInit {
 
 
   //Muetra el listado de provincias pero no mete
+getProvincias() {
+  this.servicioProvincia.getAllProvincias().subscribe({
+    next: (RESPONSE: any) => {
+      if (RESPONSE.ok) this.provincias = RESPONSE.data as Provincia[];
+    },
+    error: (err) => console.error('Error al cargar provincias', err)
+  });
+}
 
-  async getProvincias(){
-    const RESPONSE = await this.servicioProvincia.getAllProvincias().toPromise();
-    if (RESPONSE.ok) {
-      this.provincias = RESPONSE.data as Provincia[];
-    }
-  }
+getEntidadCentros() {
+  this.servicioCentros.getAllEntidades().subscribe({
+    next: (RESPONSE: any) => {
+      if (RESPONSE.ok) this.entidades = RESPONSE.data as Entidad[];
+    },
+    error: (err) => console.error('Error al cargar entidades', err)
+  });
+}
 
+getCiclos() {
+  this.servicioCiclos.getAllCiclos().subscribe({
+    next: (RESPONSE: any) => {
+      if (RESPONSE.ok) this.ciclos = RESPONSE.data as Ciclo[];
+    },
+    error: (err) => console.error('Error al cargar ciclos', err)
+  });
+}
 
-
-  async getCiclos(){
-    const RESPONSE = await this.servicioCiclos.getAllCiclos().toPromise();
-    if (RESPONSE.ok) {
-      this.ciclos = RESPONSE.data as Ciclo[];
-    }
-  }
-
-  async getEntidadCentros(){
-    const RESPONSE = await this.servicioCentros.getAllEntidades().toPromise();
-    if (RESPONSE.ok) {
-      this.entidades = RESPONSE.data as Entidad[];
-    }
-  }
 
   onClick(){
     this.dialogRef.close({ok:false})

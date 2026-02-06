@@ -30,28 +30,30 @@ export class AlumnosService {
   // Crear un nuevo alumno
   // -----------------------------
   addAlumno(alumno: Alumno) {
-    const body = JSON.stringify(alumno); // Convertimos el objeto a JSON
-    return this.http.post<ApiResponse>(`${URL_API}/${ENDPOINT}`, body, {
-      headers: this.commonService.headers
-    });
-  }
+  return this.http.post<{ok: boolean, message: string, data: Alumno}>(`http://127.0.0.1:8000/alumnos`, alumno, {
+    headers: this.commonService.getHeaders()
+  });
+}
 
   // -----------------------------
   // Editar un alumno existente
   // -----------------------------
   editAlumno(alumno: Alumno) {
-    const body = JSON.stringify(alumno);
-    return this.http.put<ApiResponse>(`${URL_API}/${ENDPOINT}`, body, {
-      headers: this.commonService.headers
-    });
-  }
+  return this.http.put<ApiResponse>(
+    `http://127.0.0.1:8000/alumnos/${alumno.id_alumno}`, // ✅ URL con id
+    alumno, // ✅ enviar objeto directamente
+    { headers: this.commonService.getHeaders() }
+  );
+}
+
+
 
   // -----------------------------
   // Eliminar un alumno
   // -----------------------------
   deleteAlumno(id: number | string) {
-    return this.http.delete<ApiResponse>(`${URL_API}/${ENDPOINT}?id=${id}`, {
-      headers: this.commonService.headers
-    });
-  }
+  return this.http.delete<{ok: boolean, message?: string}>(`http://127.0.0.1:8000/alumnos/${id}`, {
+    headers: this.commonService.headers
+  });
+}
 }

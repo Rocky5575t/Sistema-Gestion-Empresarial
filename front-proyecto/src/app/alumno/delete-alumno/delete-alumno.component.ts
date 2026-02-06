@@ -12,31 +12,41 @@ import { Alumno } from '../../shared/interfaces/alumno';
 })
 export class DeleteAlumnoComponent implements OnInit {
 
-  ALUMNO: String;
+  ALUMNO: string;
 
   constructor(
-    public servicioAlumno: AlumnosService,
+    private servicioAlumno: AlumnosService,
     @Inject(MAT_DIALOG_DATA) public alumno: Alumno,
-    public snackBar: MatSnackBar,
-    public dialogRef:MatDialogRef<DeleteAlumnoComponent>
-
-  )
-   {   }
+    private snackBar: MatSnackBar,
+    private dialogRef: MatDialogRef<DeleteAlumnoComponent>
+  ) { }
 
   ngOnInit(): void {
     this.ALUMNO = ALUMNO_ALUMNO;
   }
 
-  onNoClick(){
-    this.dialogRef.close({ok:false});
+  // Cierra el dialog sin eliminar
+  onNoClick(): void {
+    this.dialogRef.close({ ok: false });
   }
 
-  async confirmDelete(){
-    const RESPONSE = await this.servicioAlumno.deleteAlumno(this.alumno.id_alumno).toPromise();
-    if (RESPONSE.ok) {
-      this.snackBar.open(RESPONSE.message, CLOSE, { duration: 5000 });
-            this.dialogRef.close({ ok: RESPONSE.ok, data: RESPONSE.data });
-    } else { this.snackBar.open(RESPONSE.message, CLOSE, { duration: 5000 }); }
+  // Confirma eliminación
+  confirmDelete(): void {
+    this.servicioAlumno.deleteAlumno(this.alumno.id_alumno).subscribe({
+      next: (RESPONSE: any) => {
+        if (RESPONSE.ok) {
+          this.snackBar.open(RESPONSE.message || 'Alumno eliminado', CLOSE, { duration: 5000 });
+          // Cierra dialog y notifica al componente padre que se eliminó correctamente
+          this.dialogRef.close({ ok: true });
+        } else {
+          this.snackBar.open(RESPONSE.message || 'No se pudo eliminar', CLOSE, { duration: 5000 });
+        }
+      },
+      error: (err) => {
+        console.error('Error al eliminar alumno', err);
+        this.snackBar.open('Error al conectar con el servidor', CLOSE, { duration: 5000 });
+      }
+    });
   }
 
 }

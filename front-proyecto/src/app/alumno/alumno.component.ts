@@ -1,27 +1,39 @@
+// --------------------------------------------------
+// IMPORTS GENERALES DE ANGULAR
+// --------------------------------------------------
 import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
-// Angular Material: tabla, paginador, ordenación, diálogos
+
+// --------------------------------------------------
+// IMPORTS DE ANGULAR MATERIAL (TABLA, PAGINACIÓN, ORDENACIÓN, DIÁLOGOS)
+// --------------------------------------------------
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
-// Overlay permite abrir diálogos sin que la página se mueva
+
+// --------------------------------------------------
+// CDK Y FORMULARIOS REACTIVOS
+// --------------------------------------------------
 import { Overlay } from '@angular/cdk/overlay';
-// Formularios reactivos para filtros
 import { FormControl } from '@angular/forms';
-// Selección de filas (aunque aquí usamos solo una selección)
 import { SelectionModel } from '@angular/cdk/collections';
 
-// Interfaz del alumno
+// --------------------------------------------------
+// INTERFACES Y SERVICIOS PROPIOS
+// --------------------------------------------------
 import { Alumno } from '../shared/interfaces/alumno';
-// Servicio que se comunica con la API de alumnos
 import { AlumnosService } from '../services/alumno.service';
 
-// Componentes de diálogo para CRUD
+// --------------------------------------------------
+// COMPONENTES DE LOS DIÁLOGOS (CRUD)
+// --------------------------------------------------
 import { AddAlumnoComponent } from './add-alumno/add-alumno.component';
 import { EditAlumnoComponent } from './edit-alumno/edit-alumno.component';
 import { DeleteAlumnoComponent } from './delete-alumno/delete-alumno.component';
 
-
+// --------------------------------------------------
+// DECORADOR DEL COMPONENTE
+// --------------------------------------------------
 @Component({
   selector: 'app-alumnos',
   templateUrl: './alumno.component.html',
@@ -29,148 +41,243 @@ import { DeleteAlumnoComponent } from './delete-alumno/delete-alumno.component';
 })
 export class AlumnosComponent implements OnInit, AfterViewInit {
 
-  // Referencias a los componentes de paginación y ordenación de Angular Material
+  // --------------------------------------------------
+  // REFERENCIAS A ELEMENTOS DE LA VISTA
+  // --------------------------------------------------
+  // Permiten conectar la tabla con paginación y ordenación
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  // DataSource de la tabla: contiene los alumnos a mostrar
+  // --------------------------------------------------
+  // DATA SOURCE Y SELECCIÓN DE FILAS
+  // --------------------------------------------------
+  // Fuente de datos de la tabla
   dataSource = new MatTableDataSource<Alumno>();
-  // SelectionModel permite seleccionar filas de la tabla (aquí solo seleccionamos una fila)
+
+  // Control de selección (una sola fila)
   selection = new SelectionModel<Alumno>(false);
 
-  // FormControls para los filtros de búsqueda
+  // --------------------------------------------------
+  // FORM CONTROLS PARA LOS FILTROS
+  // --------------------------------------------------
   idFilter = new FormControl('');
   nombreFilter = new FormControl('');
   apellidosFilter = new FormControl('');
   cursoFilter = new FormControl('');
+  nifFilter = new FormControl('');
+  fechaNacimientoFilter = new FormControl('');
+  entidadFilter = new FormControl('');
+  cicloFilter = new FormControl('');
+  telefonoFilter = new FormControl('');
 
+  // --------------------------------------------------
+  // VARIABLES DE ESTADO Y PAGINACIÓN
+  // --------------------------------------------------
   isChecked = false;
   isCheckedAll = false;
   pageSizeChecked: number;
   pageIndexChecked: number;
 
-  // Objeto que guarda los valores de los filtros
-  filterValues = { id_alumno: '', nombre: '', apellidos: '', curso: '' };
+  // --------------------------------------------------
+  // OBJETO QUE ALMACENA LOS VALORES DE LOS FILTROS
+  // --------------------------------------------------
+  filterValues = {
+    id_alumno: '',
+    nif_nie: '',
+    nombre: '',
+    apellidos: '',
+    fecha_nacimiento: '',
+    id_entidad_centro: '',
+    id_ciclo: '',
+    curso: '',
+    telefono: ''
+  };
 
-  // Columnas que se mostrarán en la tabla
+  // --------------------------------------------------
+  // COLUMNAS QUE SE MUESTRAN EN LA TABLA
+  // --------------------------------------------------
   displayedColumns: string[] = [
-    'id_alumno','nif_nie','nombre','apellidos',
-    'fecha_nacimiento','id_entidad_centro','id_ciclo',
-    'curso','telefono','actions'
+    'id_alumno',
+    'nif_nie',
+    'nombre',
+    'apellidos',
+    'fecha_nacimiento',
+    'id_entidad_centro',
+    'id_ciclo',
+    'curso',
+    'telefono',
+    'actions'
   ];
 
+  // --------------------------------------------------
+  // CONSTRUCTOR (INYECCIÓN DE DEPENDENCIAS)
+  // --------------------------------------------------
   constructor(
-    private alumnosService: AlumnosService,
-    public dialog: MatDialog,
-    private overlay: Overlay
+    private alumnosService: AlumnosService, // Comunicación con la API
+    public dialog: MatDialog,                // Diálogos modales
+    private overlay: Overlay                 // Control visual de los diálogos
   ) {}
 
+  // --------------------------------------------------
+  // CICLO DE VIDA: INICIALIZACIÓN
+  // --------------------------------------------------
   ngOnInit(): void {
-
-    this.loadAlumnos(); // Cargar los alumnos desde la API
+    // Carga inicial de alumnos al abrir el componente
+    this.loadAlumnos();
   }
 
+  // --------------------------------------------------
+  // CICLO DE VIDA: DESPUÉS DE RENDERIZAR LA VISTA
+  // --------------------------------------------------
   ngAfterViewInit(): void {
-    // Conectar paginador y ordenación después de que estén inicializados
+    // Se asignan paginator y sort cuando la vista ya existe
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
-  // ---------------------------------------
-  // Función para cargar los alumnos
-  // ---------------------------------------
-  async loadAlumnos() {
-    const response = await this.alumnosService.getAll().toPromise();
-    if (response.ok) {
-      this.alumnosService.alumnos = response.data as Alumno[];
-      this.dataSource.data = this.alumnosService.alumnos;
-      this.dataSource.filterPredicate = this.createFilter();
-      this.setupFilters();
-    }
-    this.changePage()
-    console.log(response);
+  // --------------------------------------------------
+  // CARGA DE ALUMNOS DESDE LA API
+  // --------------------------------------------------
+  loadAlumnos() {
+    this.alumnosService.getAll().subscribe(
+      (response: any) => {
+        if (response.ok) {
+          // Asignar datos a la tabla
+          this.dataSource.data = response.data;
+
+          // Configurar filtros personalizados
+          this.dataSource.filterPredicate = this.createFilter();
+          this.setupFilters();
+          this.dataSource.filter = JSON.stringify(this.filterValues);
+        }
+      },
+      err => {
+        console.error('Error al cargar alumnos', err);
+      }
+    );
   }
 
-  // ---------------------------------------
-  // Abrir diálogo para agregar un alumno
-  // ---------------------------------------
-  async addAlumno() {
+  // --------------------------------------------------
+  // MÉTODOS CRUD (ABREN DIÁLOGOS)
+  // --------------------------------------------------
+  addAlumno() {
     const dialogRef = this.dialog.open(AddAlumnoComponent, {
       scrollStrategy: this.overlay.scrollStrategies.noop(),
       disableClose: true
     });
-    const result = await dialogRef.afterClosed().toPromise();
-    if (result?.ok) this.loadAlumnos();
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.ok) {
+        this.loadAlumnos();
+      }
+    });
   }
 
-  // ---------------------------------------
-  // Abrir diálogo para editar un alumno
-  // ---------------------------------------
-  async editAlumno(alumno: Alumno) {
+  editAlumno(alumno: Alumno) {
     const dialogRef = this.dialog.open(EditAlumnoComponent, {
       data: alumno,
       scrollStrategy: this.overlay.scrollStrategies.noop(),
       disableClose: true
     });
-    const result = await dialogRef.afterClosed().toPromise();
-    if (result?.ok) this.loadAlumnos();
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.ok) {
+        this.loadAlumnos();
+      }
+    });
   }
 
-  // ---------------------------------------
-  // Abrir diálogo para eliminar un alumno
-  // ---------------------------------------
-  async deleteAlumno(alumno: Alumno) {
+  deleteAlumno(alumno: Alumno) {
     const dialogRef = this.dialog.open(DeleteAlumnoComponent, {
       data: alumno,
       scrollStrategy: this.overlay.scrollStrategies.noop()
     });
-    const result = await dialogRef.afterClosed().toPromise();
-    if (result?.ok) this.loadAlumnos();
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.ok) {
+        this.loadAlumnos();
+      }
+    });
   }
 
-  // ---------------------------------------
-  // Función personalizada de filtrado
-  // ---------------------------------------
+  // --------------------------------------------------
+  // FILTRADO PERSONALIZADO DE LA TABLA
+  // --------------------------------------------------
   createFilter(): (alumno: Alumno, filter: string) => boolean {
     return (alumno: Alumno, filter: string): boolean => {
       const search = JSON.parse(filter);
-      return alumno.id_alumno.toString().includes(search.id_alumno)
-        && alumno.nombre.toLowerCase().includes(search.nombre.toLowerCase())
-        && alumno.apellidos.toLowerCase().includes(search.apellidos.toLowerCase())
-        && alumno.curso.toString().includes(search.curso);
+
+      return (alumno.id_alumno?.toString() ?? '').includes(search.id_alumno)
+        && (alumno.nif_nie?.toLowerCase() ?? '').includes(search.nif_nie.toLowerCase())
+        && (alumno.nombre?.toLowerCase() ?? '').includes(search.nombre.toLowerCase())
+        && (alumno.apellidos?.toLowerCase() ?? '').includes(search.apellidos.toLowerCase())
+        && (alumno.fecha_nacimiento?.toString() ?? '').includes(search.fecha_nacimiento)
+        && (alumno.id_entidad_centro?.toString() ?? '').includes(search.id_entidad_centro)
+        && (alumno.id_ciclo?.toString() ?? '').includes(search.id_ciclo)
+        && (alumno.curso?.toString() ?? '').includes(search.curso)
+        && (alumno.telefono?.toString() ?? '').includes(search.telefono);
     };
   }
 
-  // ---------------------------------------
-  // Conectar los FormControls a la función de filtrado
-  // ---------------------------------------
+  // --------------------------------------------------
+  // ASOCIAR FORM CONTROLS CON EL FILTRO
+  // --------------------------------------------------
   setupFilters() {
     this.idFilter.valueChanges.subscribe(val => {
       this.filterValues.id_alumno = val;
       this.dataSource.filter = JSON.stringify(this.filterValues);
     });
+
+    this.nifFilter.valueChanges.subscribe(val => {
+      this.filterValues.nif_nie = val;
+      this.dataSource.filter = JSON.stringify(this.filterValues);
+    });
+
     this.nombreFilter.valueChanges.subscribe(val => {
       this.filterValues.nombre = val;
       this.dataSource.filter = JSON.stringify(this.filterValues);
     });
+
     this.apellidosFilter.valueChanges.subscribe(val => {
       this.filterValues.apellidos = val;
       this.dataSource.filter = JSON.stringify(this.filterValues);
     });
+
     this.cursoFilter.valueChanges.subscribe(val => {
       this.filterValues.curso = val;
       this.dataSource.filter = JSON.stringify(this.filterValues);
     });
+
+    this.fechaNacimientoFilter.valueChanges.subscribe(val => {
+      this.filterValues.fecha_nacimiento = val;
+      this.dataSource.filter = JSON.stringify(this.filterValues);
+    });
+
+    this.entidadFilter.valueChanges.subscribe(val => {
+      this.filterValues.id_entidad_centro = val;
+      this.dataSource.filter = JSON.stringify(this.filterValues);
+    });
+
+    this.cicloFilter.valueChanges.subscribe(val => {
+      this.filterValues.id_ciclo = val;
+      this.dataSource.filter = JSON.stringify(this.filterValues);
+    });
+
+    this.telefonoFilter.valueChanges.subscribe(val => {
+      this.filterValues.telefono = val;
+      this.dataSource.filter = JSON.stringify(this.filterValues);
+    });
   }
 
-  // ---------------------------------------
-  // Manejo de checkboxes en paginación
-  // ---------------------------------------
+  // --------------------------------------------------
+  // CONTROL DE PAGINACIÓN
+  // --------------------------------------------------
   changePage() {
     if (this.isCheckedAll) {
       this.isChecked = true;
     } else {
-      this.isChecked = (((this.pageIndexChecked + 1) * this.pageSizeChecked) /
+      this.isChecked =
+        (((this.pageIndexChecked + 1) * this.pageSizeChecked) /
         ((this.dataSource.paginator.pageIndex + 1) * this.dataSource.paginator.pageSize)) >= 1;
     }
   }

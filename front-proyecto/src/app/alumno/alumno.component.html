@@ -1,96 +1,134 @@
 <div class="example-container mat-elevation-z8">
   <div class="example-table-container">
 
-    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+    <table mat-table
+           [dataSource]="dataSource"
+           matSort
+           class="mat-elevation-z8">
 
-      <!-- ID Alumno -->
+      <!-- ID ALUMNO -->
       <ng-container matColumnDef="id_alumno">
-        <th mat-header-cell *matHeaderCellDef>
-          <input matInput [formControl]="idFilter" placeholder="Id">
-          <span mat-sort-header></span>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <input matInput
+                 placeholder="Id"
+                 [formControl]="idFilter"
+                 (click)="$event.stopPropagation()">
         </th>
-        <td mat-cell *matCellDef="let alumno">{{ alumno.id_alumno }}</td>
+        <td mat-cell *matCellDef="let alumno">
+          {{ alumno.id_alumno }}
+        </td>
       </ng-container>
 
-      <!-- NIF/NIE -->
+      <!-- NIF / NIE -->
       <ng-container matColumnDef="nif_nie">
-        <th mat-header-cell *matHeaderCellDef>
-          <input matInput placeholder="NifNie">
-          <span mat-sort-header></span>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <input matInput
+                 placeholder="NIF / NIE"
+                 [formControl]="nifFilter"
+                 (click)="$event.stopPropagation()">
         </th>
-        <td mat-cell *matCellDef="let alumno">{{ alumno.nif_nie }}</td>
+        <td mat-cell *matCellDef="let alumno">
+          {{ alumno.nif_nie }}
+        </td>
       </ng-container>
 
-      <!-- Nombre -->
+      <!-- NOMBRE -->
       <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef>
-          <input matInput [formControl]="nombreFilter" placeholder="Nombre">
-          <span mat-sort-header></span>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <input matInput
+                 placeholder="Nombre"
+                 [formControl]="nombreFilter"
+                 (click)="$event.stopPropagation()">
         </th>
-        <td mat-cell *matCellDef="let alumno">{{ alumno.nombre }}</td>
+        <td mat-cell *matCellDef="let alumno">
+          {{ alumno.nombre }}
+        </td>
       </ng-container>
 
-      <!-- Apellidos -->
+      <!-- APELLIDOS -->
       <ng-container matColumnDef="apellidos">
-        <th mat-header-cell *matHeaderCellDef>
-          <input matInput [formControl]="apellidosFilter" placeholder="Apellidos">
-          <span mat-sort-header></span>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <input matInput
+                 placeholder="Apellidos"
+                 [formControl]="apellidosFilter"
+                 (click)="$event.stopPropagation()">
         </th>
-        <td mat-cell *matCellDef="let alumno">{{ alumno.apellidos }}</td>
+        <td mat-cell *matCellDef="let alumno">
+          {{ alumno.apellidos }}
+        </td>
       </ng-container>
 
-      <!-- Fecha Nacimiento -->
+      <!-- FECHA NACIMIENTO -->
       <ng-container matColumnDef="fecha_nacimiento">
-        <th mat-header-cell *matHeaderCellDef>
-          <input matInput placeholder="Fecha Nacimiento">
-          <span mat-sort-header></span>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <input matInput
+                 placeholder="Fecha nac."
+                 [formControl]="fechaNacimientoFilter"
+                 (click)="$event.stopPropagation()">
         </th>
-        <td mat-cell *matCellDef="let alumno">{{ alumno.fecha_nacimiento | date }}</td>
+        <td mat-cell *matCellDef="let alumno">
+          {{ alumno.fecha_nacimiento | date:'dd/MM/yyyy' }}
+        </td>
       </ng-container>
 
-      <!-- Entidad -->
+      <!-- ENTIDAD -->
       <ng-container matColumnDef="id_entidad_centro">
-        <th mat-header-cell *matHeaderCellDef>
-          <input matInput placeholder="Entidad">
-          <span mat-sort-header></span>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <input matInput
+                 placeholder="Entidad"
+                 [formControl]="entidadFilter"
+                 (click)="$event.stopPropagation()">
         </th>
-        <td mat-cell *matCellDef="let alumno">{{ alumno.id_entidad_centro }}</td>
+        <td mat-cell *matCellDef="let alumno">
+          {{ alumno.id_entidad_centro }}
+        </td>
       </ng-container>
 
-      <!-- Ciclo -->
+      <!-- CICLO -->
       <ng-container matColumnDef="id_ciclo">
-        <th mat-header-cell *matHeaderCellDef>
-          <input matInput placeholder="Ciclo">
-          <span mat-sort-header></span>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <input matInput
+                 placeholder="Ciclo"
+                 [formControl]="cicloFilter"
+                 (click)="$event.stopPropagation()">
         </th>
-        <td mat-cell *matCellDef="let alumno">{{ alumno.id_ciclo }}</td>
+        <td mat-cell *matCellDef="let alumno">
+          {{ alumno.id_ciclo }}
+        </td>
       </ng-container>
 
-      <!-- Curso -->
+      <!-- CURSO -->
       <ng-container matColumnDef="curso">
-        <th mat-header-cell *matHeaderCellDef>
-          <input matInput [formControl]="cursoFilter" placeholder="Curso">
-          <span mat-sort-header></span>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <input matInput
+                 placeholder="Curso"
+                 [formControl]="cursoFilter"
+                 (click)="$event.stopPropagation()">
         </th>
-        <td mat-cell *matCellDef="let alumno">{{ alumno.curso }}</td>
+        <td mat-cell *matCellDef="let alumno">
+          {{ alumno.curso }}
+        </td>
       </ng-container>
 
-      <!-- Teléfono -->
+      <!-- TELÉFONO -->
       <ng-container matColumnDef="telefono">
-        <th mat-header-cell *matHeaderCellDef>
-          <input matInput placeholder="Teléfono">
-          <span mat-sort-header></span>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <input matInput
+                 placeholder="Teléfono"
+                 [formControl]="telefonoFilter"
+                 (click)="$event.stopPropagation()">
         </th>
-        <td mat-cell *matCellDef="let alumno">{{ alumno.telefono }}</td>
+        <td mat-cell *matCellDef="let alumno">
+          {{ alumno.telefono }}
+        </td>
       </ng-container>
 
-      <!-- Actions -->
+      <!-- ACCIONES -->
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>
           <button mat-icon-button (click)="addAlumno()">
             <mat-icon>add_circle</mat-icon>
           </button>
-          <mat-checkbox  [checked]="isChecked"></mat-checkbox>
         </th>
         <td mat-cell *matCellDef="let alumno">
           <button mat-icon-button (click)="editAlumno(alumno)">
@@ -99,22 +137,23 @@
           <button mat-icon-button (click)="deleteAlumno(alumno)">
             <mat-icon>delete</mat-icon>
           </button>
-          <mat-checkbox  [checked]="alumno.checked"></mat-checkbox>
         </td>
       </ng-container>
 
-      <!-- Header y Row -->
+      <!-- FILAS -->
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-          [ngClass]="{ 'selected': selection.isSelected(row) }"
+      <tr mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          [ngClass]="{ selected: selection.isSelected(row) }"
           (click)="selection.select(row)"
           (dblclick)="editAlumno(row)">
       </tr>
 
     </table>
-
   </div>
 
-  <!-- Paginador -->
-  <mat-paginator #paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" (page)="changePage()"></mat-paginator>
+  <mat-paginator
+    [pageSize]="10"
+    [pageSizeOptions]="[5, 10, 25]">
+  </mat-paginator>
 </div>

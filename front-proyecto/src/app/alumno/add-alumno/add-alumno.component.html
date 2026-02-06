@@ -3,55 +3,79 @@
 
   <form class="mat-dialog-content" [formGroup]="alumnoForm">
 
+    <!-- NIF / NIE -->
     <div class="form">
-      <mat-form-field color="accent">
-        <input matInput placeholder="NIF / NIE" formControlName="nif_nie" maxlength="20" required>
+      <mat-form-field appearance="outline">
+        <input matInput
+               placeholder="NIF / NIE"
+               formControlName="nif_nie"
+               maxlength="20"
+               required>
       </mat-form-field>
     </div>
 
+    <!-- NOMBRE -->
     <div class="form">
-      <mat-form-field color="accent">
-        <input matInput placeholder="Nombre" formControlName="nombre" maxlength="100" required>
+      <mat-form-field appearance="outline">
+        <input matInput
+               placeholder="Nombre"
+               formControlName="nombre"
+               maxlength="100"
+               required>
       </mat-form-field>
     </div>
 
+    <!-- APELLIDOS -->
     <div class="form">
-      <mat-form-field color="accent">
-        <input matInput placeholder="Apellidos" formControlName="apellidos" maxlength="150" required>
+      <mat-form-field appearance="outline">
+        <input matInput
+               placeholder="Apellidos"
+               formControlName="apellidos"
+               maxlength="150"
+               required>
       </mat-form-field>
     </div>
 
+    <!-- FECHA NACIMIENTO -->
     <div class="form">
-      <mat-form-field>
+      <mat-form-field appearance="outline">
         <mat-label>Fecha de nacimiento</mat-label>
-        <input matInput type="date" formControlName="fecha_nacimiento" required>
+        <input matInput
+               type="date"
+               formControlName="fecha_nacimiento"
+               required>
       </mat-form-field>
     </div>
 
-    <div class="form">
-      <mat-form-field>
-        <mat-label>Centro educativo</mat-label>
-        <mat-select formControlName="id_entidad_centro" required>
-          <mat-option *ngFor="let centro of entidades" [value]="centro.id">
-            {{ centro.nombre }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
+    <!-- CENTRO EDUCATIVO -->
+<div class="form">
+  <mat-form-field appearance="outline">
+    <mat-label>Centro educativo</mat-label>
+    <mat-select formControlName="id_entidad_centro" required>
+      <mat-option *ngFor="let centro of entidades"
+                  [value]="centro.id_entidad">
+        {{ centro.entidad }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
 
-    <div class="form">
-      <mat-form-field>
-        <mat-label>Ciclo</mat-label>
-        <mat-select formControlName="id_ciclo" required>
-          <mat-option *ngFor="let ciclo of ciclos" [value]="ciclo.id">
-            {{ ciclo.nombre }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
+    <!-- CICLO -->
+<div class="form">
+  <mat-form-field appearance="outline">
+    <mat-label>Ciclo</mat-label>
+    <mat-select formControlName="id_ciclo" required>
+      <mat-option *ngFor="let ciclo of ciclos"
+                  [value]="ciclo.id_ciclo">
+        {{ ciclo.ciclo }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
 
+    <!-- CURSO -->
     <div class="form">
-      <mat-form-field>
+      <mat-form-field appearance="outline">
         <mat-label>Curso</mat-label>
         <mat-select formControlName="curso" required>
           <mat-option *ngFor="let c of cursos" [value]="c">
@@ -61,54 +85,86 @@
       </mat-form-field>
     </div>
 
+    <!-- TELÉFONO -->
     <div class="form">
-      <mat-form-field color="accent">
-        <input matInput placeholder="Teléfono" formControlName="telefono" maxlength="20" required>
+      <mat-form-field appearance="outline">
+        <input matInput
+               placeholder="Teléfono"
+               formControlName="telefono"
+               maxlength="20"
+               required>
       </mat-form-field>
     </div>
 
+    <!-- DIRECCIÓN -->
     <div class="form">
-      <mat-form-field color="accent">
-        <input matInput placeholder="Dirección" formControlName="direccion" maxlength="150">
+      <mat-form-field appearance="outline">
+        <input matInput
+               placeholder="Dirección"
+               formControlName="direccion"
+               maxlength="150">
       </mat-form-field>
     </div>
 
+    <!-- CÓDIGO POSTAL -->
     <div class="form">
-      <mat-form-field color="accent">
-        <input matInput placeholder="Código Postal" formControlName="cp" maxlength="10">
+      <mat-form-field appearance="outline">
+        <input matInput
+               placeholder="Código Postal"
+               formControlName="cp"
+               maxlength="10">
       </mat-form-field>
     </div>
 
+    <!-- LOCALIDAD -->
     <div class="form">
-      <mat-form-field color="accent">
-        <input matInput placeholder="Localidad" formControlName="localidad" maxlength="100">
+      <mat-form-field appearance="outline">
+        <input matInput
+               placeholder="Localidad"
+               formControlName="localidad"
+               maxlength="100">
       </mat-form-field>
     </div>
 
+    <!-- PROVINCIA -->
     <div class="form">
-      <mat-form-field>
+      <mat-form-field appearance="outline">
         <mat-label>Provincia</mat-label>
         <mat-select formControlName="id_provincia">
-          <mat-option value="">Sin provincia</mat-option>
-          <mat-option *ngFor="let p of provincias" [value]="p.id_provincia">
+          <mat-option [value]="null">Sin provincia</mat-option>
+          <mat-option *ngFor="let p of provincias"
+                      [value]="p.id_provincia">
             {{ p.provincia }}
           </mat-option>
         </mat-select>
       </mat-form-field>
     </div>
 
+    <!-- OBSERVACIONES -->
     <div class="form">
-      <mat-form-field color="accent">
-        <textarea matInput placeholder="Observaciones" formControlName="observaciones"></textarea>
+      <mat-form-field appearance="outline">
+        <textarea matInput
+                  placeholder="Observaciones"
+                  formControlName="observaciones"
+                  rows="3">
+        </textarea>
       </mat-form-field>
     </div>
 
-    <div mat-dialog-actions>
-      <button mat-button type="submit" [disabled]="!alumnoForm.valid" (click)="confirmAdd()">
-        Guardar
-      </button>
-      <button mat-button (click)="onClick()" tabindex="-1">
+    <!-- ACCIONES -->
+    <div mat-dialog-actions align="end">
+      <button mat-button
+              type="button"
+              (click)="onClick()">
         Cancelar
+      </button>
+
+      <button mat-raised-button
+              color="primary"
+              type="button"
+              [disabled]="!alumnoForm.valid"
+              (click)="confirmAdd()">
+        Guardar
       </button>
     </div>
 

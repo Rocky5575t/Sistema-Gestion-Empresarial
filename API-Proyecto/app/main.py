@@ -38,7 +38,10 @@ app.add_middleware(
 def get_alumnos(usuario = Security(validar_token)):
     with Session(engine) as session:
         alumnos = session.exec(select(Alumno)).all()
-        return alumnos
+        return {
+            "ok": True,
+            "data": alumnos
+        }
 
 @app.post("/alumnos")
 def create_alumno(alumno: Alumno, usuario = Security(validar_token)):
@@ -46,20 +49,34 @@ def create_alumno(alumno: Alumno, usuario = Security(validar_token)):
         session.add(alumno)
         session.commit()
         session.refresh(alumno)
-        return alumno
+        return {"ok": True, "message": "Alumno creado correctamente", "data": alumno}
 
 @app.put("/alumnos/{id_alumno}")
 def update_alumno(id_alumno: int, datos: Alumno, usuario = Security(validar_token)):
     with Session(engine) as session:
         alumno = session.get(Alumno, id_alumno)
         if not alumno:
-            return {"error": "Alumno no existe"}
+            return {"ok": False, "message": "Alumno no existe"}
 
+        # Actualizar todos los campos del formulario
+        alumno.nif_nie = datos.nif_nie
         alumno.nombre = datos.nombre
         alumno.apellidos = datos.apellidos
+        alumno.fecha_nacimiento = datos.fecha_nacimiento
+        alumno.id_entidad_centro = datos.id_entidad_centro
+        alumno.id_ciclo = datos.id_ciclo
+        alumno.curso = datos.curso
         alumno.telefono = datos.telefono
+        alumno.direccion = datos.direccion
+        alumno.cp = datos.cp
+        alumno.localidad = datos.localidad
+        alumno.id_provincia = datos.id_provincia
+        alumno.observaciones = datos.observaciones
+
         session.commit()
-        return alumno
+        session.refresh(alumno)
+        return {"ok": True, "message": "Alumno actualizado correctamente", "data": alumno}
+
 
 @app.delete("/alumnos/{id_alumno}")
 def delete_alumno(id_alumno: int, usuario = Security(validar_token)):

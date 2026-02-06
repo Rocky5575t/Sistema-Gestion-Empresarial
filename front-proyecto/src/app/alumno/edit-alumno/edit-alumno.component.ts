@@ -65,19 +65,27 @@ export class EditAlumnoComponent implements OnInit {
   }
 
   // Confirmar edición
-  async confirmEdit() {
+  confirmEdit(): void {
     if (this.alumnoForm.valid) {
-      const alumnoActualizado = this.alumnoForm.value;
+      const alumnoActualizado = { ...this.alumno, ...this.alumnoForm.value };
 
-      const RESPONSE = await this.servicioAlumnos.editAlumno(alumnoActualizado).toPromise();
-      if (RESPONSE.ok) {
-        this.snackBar.open(RESPONSE.message, CLOSE, { duration: 5000 });
-        this.dialogRef.close({ ok: RESPONSE.ok, data: RESPONSE.data });
-      } else {
-        this.snackBar.open(ERROR, CLOSE, { duration: 5000 });
-      }
+      // Usamos subscribe para manejar la respuesta de manera reactiva
+      this.servicioAlumnos.editAlumno(alumnoActualizado).subscribe({
+        next: (RESPONSE: any) => {
+          if (RESPONSE.ok) {
+            this.snackBar.open(RESPONSE.message || 'Alumno modificado correctamente', CLOSE, { duration: 5000 });
+            this.dialogRef.close({ ok: true, data: RESPONSE.data });
+          } else {
+            this.snackBar.open(RESPONSE.message || ERROR, CLOSE, { duration: 5000 });
+          }
+        },
+        error: (err) => {
+          console.error('Error al modificar alumno', err);
+          this.snackBar.open('Error al conectar con el servidor', CLOSE, { duration: 5000 });
+        }
+      });
     } else {
-      this.snackBar.open(ERROR, CLOSE, { duration: 5000 });
+      this.snackBar.open(INVALID_FORM, CLOSE, { duration: 5000 });
     }
   }
 
@@ -96,7 +104,8 @@ export class EditAlumnoComponent implements OnInit {
     if (RESPONSE.ok) this.entidades = RESPONSE.data as Entidad[];
   }
 
-  onNoClick() {
+  onNoClick(): void {
     this.dialogRef.close({ ok: false });
   }
+
 }
