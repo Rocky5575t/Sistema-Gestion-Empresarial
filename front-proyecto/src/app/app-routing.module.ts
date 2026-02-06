@@ -74,6 +74,7 @@ const routes: Routes = [
   { path: 'motivos-nodual', loadChildren: () => import('./motivos-nodual/motivos-nodual.module').then(m => m.MotivosNodualModule) },
   { path: 'unidades', loadChildren: () => import('./unidades/unidades.module').then(m => m.UnidadesModule) },
   { path: 'alumnos', loadChildren: () => import('./alumno/alumno.module').then(m => m.AlumnoModule) },
+  { path: 'vacantes', loadChildren: () => import('./vacante/vacante.module').then(m => m.VacanteModule) },
 
 //  { path: 'ciclos-entidad', loadChildren: () => import('./entidades/datos-entidad/ciclos-entidad/ciclos-entidad.module').then(m => m.CiclosEntidadModule) },
 //  { path: 'contactos-entidad', loadChildren: () => import('./entidades/datos-entidad/contactos-entidad/contactos-entidad.module').then(m => m.ContactosEntidadModule) },

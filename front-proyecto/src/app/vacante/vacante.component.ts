@@ -16,10 +16,10 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './vacante.component.html',
   styleUrls: ['./vacante.component.scss']
 })
-export class VacanteComponent implements OnInit {
+export class VacanteComponent implements OnInit, AfterViewInit  {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort) sort!: MatSort;
 
   dataSource = new MatTableDataSource<Vacante>();
 
@@ -56,6 +56,7 @@ export class VacanteComponent implements OnInit {
     "curso",
     "num_vacantes",
     "observaciones",
+    'actions'
   ];
 
   constructor(
@@ -65,6 +66,7 @@ export class VacanteComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log('VacantesComponent ngOnInit');
     this.loadVacantes();
   }
 

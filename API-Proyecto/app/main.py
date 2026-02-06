@@ -95,7 +95,10 @@ def delete_alumno(id_alumno: int, usuario = Security(validar_token)):
 def get_vacantes(usuario = Security(validar_token)):
     with Session(engine) as session:
         vacantes = session.exec(select(Vacante)).all()
-        return vacantes
+        return {
+            "ok": True,
+            "data": vacantes
+        }
 
 @app.post("/vacantes")
 def create_vacante(vacante: Vacante, usuario = Security(validar_token)):
@@ -103,32 +106,38 @@ def create_vacante(vacante: Vacante, usuario = Security(validar_token)):
         session.add(vacante)
         session.commit()
         session.refresh(vacante)
-        return vacante
+        return {
+            "ok": True,
+            "message": "Vacante creada correctamente",
+            "data": vacante
+        }
 
 @app.put("/vacantes/{id_vacante}")
 def update_vacante(id_vacante: int, datos: Vacante, usuario = Security(validar_token)):
     with Session(engine) as session:
         vacante = session.get(Vacante, id_vacante)
         if not vacante:
-            return {"error": "Vacante no existe"}
-
+            return {"ok": False, "message": "Vacante no existe"}
         vacante.id_entidad = datos.id_entidad
         vacante.id_ciclo = datos.id_ciclo
         vacante.curso = datos.curso
         vacante.num_vacantes = datos.num_vacantes
         vacante.observaciones = datos.observaciones
         session.commit()
-        return vacante
+        session.refresh(vacante)
+        return {"ok": True, "message": "Vacante actualizada correctamente", "data": vacante}
+
 
 @app.delete("/vacantes/{id_vacante}")
 def delete_vacante(id_vacante: int, usuario = Security(validar_token)):
     with Session(engine) as session:
         vacante = session.get(Vacante, id_vacante)
         if not vacante:
-            return {"error": "Vacante no existe"}
+            return {"ok": False, "message": "Vacante no existe"}
         session.delete(vacante)
         session.commit()
-        return {"ok": True}
+        return {"ok": True, "message": "Vacante eliminada correctamente"}
+
 
 # -------------------------------------------------
 # ENDPOINTS VACANTES_X_ALUMNOS

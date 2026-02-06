@@ -4,7 +4,7 @@ import { Alumno } from '../shared/interfaces/alumno'; // Interfaz Alumno
 import { ApiResponse } from '../shared/interfaces/api-response'; // Interfaz de respuesta genérica
 import { HttpClient, HttpParams } from '@angular/common/http'; // HttpClient de Angular
 import { CommonService } from '../shared/common.service'; // Servicio común con headers
-import { URL_API } from 'src/environments/environment'; // URL base de la API
+import {  URL_API2 } from 'src/environments/environment'; // URL base de la API
 
 // Endpoint específico para alumnos
 const ENDPOINT = 'alumnos';
@@ -23,7 +23,7 @@ export class AlumnosService {
   // Obtener todos los alumnos
   // -----------------------------
   getAll() {
-    return this.http.get<ApiResponse>(`http://127.0.0.1:8000/alumnos`, { headers: this.commonService.getHeaders() });
+    return this.http.get<ApiResponse>(`${URL_API2}/${ENDPOINT}`, { headers: this.commonService.getHeaders() });
   }
 
   // -----------------------------
@@ -40,7 +40,7 @@ export class AlumnosService {
   // -----------------------------
   editAlumno(alumno: Alumno) {
   return this.http.put<ApiResponse>(
-    `http://127.0.0.1:8000/alumnos/${alumno.id_alumno}`, // ✅ URL con id
+    `${URL_API2}/${ENDPOINT}/${alumno.id_alumno}`, // ✅ URL con id
     alumno, // ✅ enviar objeto directamente
     { headers: this.commonService.getHeaders() }
   );
@@ -52,7 +52,7 @@ export class AlumnosService {
   // Eliminar un alumno
   // -----------------------------
   deleteAlumno(id: number | string) {
-  return this.http.delete<{ok: boolean, message?: string}>(`http://127.0.0.1:8000/alumnos/${id}`, {
+  return this.http.delete<{ok: boolean, message?: string}>(`${URL_API2}/${ENDPOINT}/${id}`, {
     headers: this.commonService.headers
   });
 }
